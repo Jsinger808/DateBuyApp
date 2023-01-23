@@ -1,24 +1,141 @@
-import React from 'react';
-import logo from './logo.svg';
+
+import React, { useState, useEffect } from "react";
 import './App.css';
+import { CurrentBuyerInfo } from "./components/currentBuyerInfo";
+import useLongPress from "./components/useLongPress";
 
 function App() {
+
+  const [currButtonColor, setbuttonColor] = useState<string>("Red");
+  const [currAddress, setCurrAddress] = useState<string>();
+  const [currTime, setCurrTime] = useState<string>();
+  const [currButtonText, setButtonText] = useState<string>("Switch");
+
+  const [status, setStatus] = useState<string>();
+
+  var address: string;
+  var time : string;
+  var buttonColor : string = currButtonColor;
+
+  useEffect(() => {
+    setStatus("Loading...");
+    initializePreviousPosition();
+    console.log("initializing finished")
+  }, [])
+
+//   function delay(milliseconds:any){
+//     return new Promise(resolve => {
+//         setTimeout(resolve, milliseconds);
+//     });
+// }
+
+    const onLongPress = () => {
+        console.log('longpress is triggered');
+    };
+
+    const onClick = () => {
+        console.log('click is triggered')
+    }
+
+    const defaultOptions = {
+        shouldPreventDefault: true,
+        delay: 500,
+    };
+    const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+
+ async function switchBuyer() {
+  setStatus("Loading...");
+  getPosition().then(async (position:any) => {
+    await updatePreviousPosition(position)
+    setStatus("Switch");
+    putCurrentPosition()
+  })
+  .catch((err) => {
+    console.error(err.message);
+  });;
+ }
+
+ var getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+    console.log("Updating Current Position")
+  });
+}
+
+
+  async function putCurrentPosition() {
+    //Inserts the opposite of the current color in DB'
+    console.log("color: " + buttonColor)
+    console.log("address: " + address)
+    console.log("time: " + time)
+    const request = {
+      color: buttonColor,
+      address: address,
+      time: time
+    }
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    };
+    await fetch(`http://localhost:${process.env.REACT_APP_PORT}/api/v1/datebuy`, requestOptions)
+  }
+
+  async function initializePreviousPosition() { 
+    const response = await fetch(`http://localhost:${process.env.REACT_APP_PORT}/api/v1/datebuy`)
+    const responseData = await response.json()
+
+    address = responseData["buyer"][0]["address"]
+    buttonColor = responseData["buyer"][0]["color"]
+    time = responseData["buyer"][0]["time"]
+
+    setCurrAddress(address)
+    setbuttonColor(buttonColor)
+    setCurrTime(time)
+    setStatus("");
+   }
+
+   async function updatePreviousPosition(position: any) { 
+    buttonColor = (buttonColor == "Blue") ? "Red" : "Blue"
+    setbuttonColor(buttonColor);
+
+    time = Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(position.timestamp)
+    setCurrTime(Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(position.timestamp))
+    
+    const resp = await fetch(`http://dev.virtualearth.net/REST/v1/Locations/${position.coords.latitude},${position.coords.longitude}?includeEntityTypes=Address&key=${process.env.REACT_APP_BING_KEY}`)
+    const respdata = await resp.json();
+    address = respdata["resourceSets"][0]["resources"][0]["name"]
+    setCurrAddress(respdata["resourceSets"][0]["resources"][0]["name"]);
+   }
+
+   function buttonColorRender(color : string) {
+    if (color == "Gray") {
+      return "Initializating";
+    }
+    else if (color == "Blue") {
+      return "1";
+    }
+    
+   }
+
+
   return (
+    <div className="center">
+
+    <button className="pushable" onClick={switchBuyer}>
+          <span className="shadow"></span>
+          <span className={"edge" + currButtonColor}></span>
+          <span className={"front" + currButtonColor}>
+            {status}
+          </span>
+      </button>
+
+    <div className="info">
+      <CurrentBuyerInfo color={currButtonColor} address={currAddress} time={currTime}/> 
+    </div>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <button {...longPressEvent}>use  Loooong  Press</button>
+    </div>
     </div>
   );
 }

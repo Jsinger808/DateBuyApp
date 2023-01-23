@@ -1,38 +1,201 @@
-.App {
-  text-align: center;
+
+
+/* #Button-Boy {
+  background-color: aqua;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#Button-Girl {
+  background-color:fuchsia;
+} */
+/* var(color-red-secondary) 0%,
+var(color-primary) 8%,
+var(color-primary) 92%,
+var(color-red-secondary) 100% */
+:root {
+  --color-gray-primary: rgba(147, 141, 142, 0.857);
+  --color-gray-secondary: rgba(86, 83, 84, 0.857);
+
+  --color-red-primary: hsl(345deg 100% 47%);
+  --color-red-secondary: hsl(340deg 100% 16%);
+
+  --color-blue-primary: rgb(10, 153, 197);
+  --color-blue-secondary: rgb(7, 8, 97);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.info { font-size : 30px;
+  padding : 0;
+  margin : 0;
+  line-height : 2em;}
+
+
+
+.center {
+  height: 100vh;
+  display: grid;
+  place-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.pushable {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  transition: filter 250ms;
+}
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: hsl(0deg 0% 0% / 0.25);
+  will-change: transform;
+  transform: translateY(2px);
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
+}
+.edgeBlue {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to left,
+    var(--color-blue-secondary) 0%,
+    var(--color-blue-primary) 8%,
+    var(--color-blue-primary) 92%,
+    var(--color-blue-secondary) 100%
+  );
+}
+.edgeRed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to left,
+    var(--color-red-secondary) 0%,
+    var(--color-red-primary) 8%,
+    var(--color-red-primary) 92%,
+    var(--color-red-secondary) 100%
+    
+  );
+}
+.edgeGray {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to left,
+    var(--color-gray-secondary) 0%,
+    var(--color-gray-primary) 8%,
+    var(--color-gray-primary) 92%,
+    var(--color-gray-secondary) 100%
+  );
+}
+
+.frontBlue {
+  display: block;
+  position: relative;
+  padding: 120px 240px;
+  border-radius: 12px;
+  font-size: 1.25rem;
   color: white;
+  background: var(--color-blue-primary);
+  will-change: transform;
+  transform: translateY(-4px);
+  font-size: 1000%;
+  font-family: Arial, Helvetica, sans-serif;
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
+}
+.frontRed {
+  display: block;
+  position: relative;
+  padding: 120px 240px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+  background: var(--color-red-primary);
+  will-change: transform;
+  transform: translateY(-4px);
+  font-size: 1000%;
+  font-family: Arial, Helvetica, sans-serif;
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
+}
+.frontGray {
+  display: block;
+  position: relative;
+  padding: 120px 240px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+  background: var(--color-gray-primary);
+  will-change: transform;
+  transform: translateY(-4px);
+  font-size: 1000%;
+  font-family: Arial, Helvetica, sans-serif;
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
 }
 
-.App-link {
-  color: #61dafb;
+.pushable:hover {
+  filter: brightness(110%);
+}
+.pushable:hover .front1 {
+  transform: translateY(-6px);
+  transition:
+    transform
+    250ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+.pushable:active .front1 {
+  transform: translateY(-2px);
+  transition: transform 34ms;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.pushable:hover .front2 {
+  transform: translateY(-6px);
+  transition:
+    transform
+    250ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+.pushable:active .front2 {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+
+.pushable:hover .shadow {
+  transform: translateY(4px);
+  transition:
+    transform
+    250ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+.pushable:active .shadow {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+.pushable:focus:not(:focus-visible) {
+  outline: none;
 }
